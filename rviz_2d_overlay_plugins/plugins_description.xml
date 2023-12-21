@@ -1,19 +1,25 @@
 <library path="rviz_2d_overlay_plugins">
     <class name="rviz_2d_overlay_plugins/TextOverlay" type="rviz_2d_overlay_plugins::OverlayTextDisplay" base_class_type="rviz_common::Display">
-        <description>
-            Text overlay plugin for the 3D view.
-        </description>
+        <description>Text overlay plugin for the 3D view.</description>
         <message_type>rviz_2d_overlay_msgs/msg/OverlayText</message_type>
     </class>
-    <class name="rviz_2d_overlay_plugins/PieChartOverlay" type="rviz_2d_overlay_plugins::PieChartDisplay" base_class_type="rviz_common::Display">
-        <description>
-            Circular gauge overlay plugin for the 3D view.
-        </description>
-        <message_type>std_msgs/msg/Float32</message_type>
-    </class>
     <class name="rviz_2d_overlay_plugins/SignalDisplay" type="rviz_2d_overlay_plugins::SignalDisplay" base_class_type="rviz_common::Display">
-        <description>
-            Signal overlay plugin for the 3D view.
-        </description>
+        <description>Signal overlay plugin for the 3D view.</description>
+    </class>
+    <class name="rviz_2d_overlay_plugins/SteeringWheelDisplay" type="rviz_2d_overlay_plugins::SteeringWheelDisplay" base_class_type="rviz_common::Display">
+        <description>Steering wheel display plugin.</description>
+        <message_type>autoware_auto_vehicle_msgs/msg/SteeringReport</message_type>
+    </class>
+    <class name="rviz_2d_overlay_plugins/GearDisplay" type="rviz_2d_overlay_plugins::GearDisplay" base_class_type="rviz_common::Display">
+        <description>Gear display plugin.</description>
+        <message_type>autoware_auto_vehicle_msgs/msg/GearReport</message_type>
+    </class>
+    <class name="rviz_2d_overlay_plugins/SpeedDisplay" type="rviz_2d_overlay_plugins::SpeedDisplay" base_class_type="rviz_common::Display">
+        <description>Speed display plugin.</description>
+        <message_type>autoware_auto_vehicle_msgs/msg/VehicleKinematicState</message_type>
+    </class>
+    <class name="rviz_2d_overlay_plugins/TurnSignalsDisplay" type="rviz_2d_overlay_plugins::TurnSignalsDisplay" base_class_type="rviz_common::Display">
+        <description>Turn signals display plugin.</description>
+        <message_type>autoware_auto_vehicle_msgs/msg/TurnIndicatorsReport</message_type>
     </class>
 </library>

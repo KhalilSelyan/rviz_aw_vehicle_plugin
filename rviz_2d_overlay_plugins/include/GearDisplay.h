@@ -18,22 +18,14 @@
 namespace rviz_2d_overlay_plugins
 {
 
-    class GearDisplay : public rviz_common::RosTopicDisplay<autoware_auto_vehicle_msgs::msg::GearReport>
+    class GearDisplay : public rviz_common::Display
     {
         Q_OBJECT
     public:
         GearDisplay();
         virtual ~GearDisplay() override;
         void drawGearIndicator(QPainter &painter, const QRectF &backgroundRect);
-        void updateTopic(const QString &new_topic)
-        {
-            this->setTopic(new_topic, rosidl_generator_traits::data_type<autoware_auto_vehicle_msgs::msg::GearReport>());
-        }
-
-    protected:
-        void onEnable() override;
-        void onDisable() override;
-        void processMessage(const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr msg) override;
+        void updateGearData(const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr &msg);
 
     private:
         int current_gear_; // Internal variable to store current gear

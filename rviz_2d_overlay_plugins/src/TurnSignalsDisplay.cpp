@@ -19,7 +19,6 @@ namespace rviz_2d_overlay_plugins
 
     TurnSignalsDisplay::TurnSignalsDisplay() : current_turn_signal_(0)
     {
-
         arrowImage.load(":/assets/images/arrow.png");
     }
 
@@ -28,28 +27,33 @@ namespace rviz_2d_overlay_plugins
         // Cleanup if necessary
     }
 
-    void TurnSignalsDisplay::onEnable()
-    {
-        subscribe();
-    }
-
-    void TurnSignalsDisplay::onDisable()
-    {
-        unsubscribe();
-    }
-
-    void TurnSignalsDisplay::processMessage(const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr msg)
+    void TurnSignalsDisplay::updateTurnSignalsData(const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr &msg)
     {
         try
         {
-            current_turn_signal_ = msg->report; // Assuming this field contains the turn signal state
+            // Assuming msg->report is the field you're interested in
+            current_turn_signal_ = msg->report;
             queueRender();
         }
         catch (const std::exception &e)
         {
+            // Log the error
             std::cerr << "Error in processMessage: " << e.what() << std::endl;
         }
     }
+
+    // void TurnSignalsDisplay::processMessage(const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr msg)
+    // {
+    //     try
+    //     {
+    //         current_turn_signal_ = msg->report; // Assuming this field contains the turn signal state
+    //         queueRender();
+    //     }
+    //     catch (const std::exception &e)
+    //     {
+    //         std::cerr << "Error in processMessage: " << e.what() << std::endl;
+    //     }
+    // }
 
     void TurnSignalsDisplay::drawArrows(QPainter &painter, const QRectF &backgroundRect, const QColor &color)
     {
@@ -83,3 +87,6 @@ namespace rviz_2d_overlay_plugins
     }
 
 } // namespace rviz_2d_overlay_plugins
+
+#include <pluginlib/class_list_macros.hpp>
+PLUGINLIB_EXPORT_CLASS(rviz_2d_overlay_plugins::TurnSignalsDisplay, rviz_common::Display)

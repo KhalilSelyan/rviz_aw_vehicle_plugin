@@ -18,6 +18,7 @@ namespace rviz_2d_overlay_plugins
 
     SpeedDisplay::SpeedDisplay() : current_speed_(0.0)
     {
+
         int fontId = QFontDatabase::addApplicationFont(":/assets/font/Quicksand/static/Quicksand-Regular.ttf");
         int fontId2 = QFontDatabase::addApplicationFont(":/assets/font/Quicksand/static/Quicksand-Bold.ttf");
         if (fontId == -1 || fontId2 == -1)
@@ -31,28 +32,36 @@ namespace rviz_2d_overlay_plugins
         // Cleanup if necessary
     }
 
-    void SpeedDisplay::onEnable()
-    {
-        subscribe();
-    }
-
-    void SpeedDisplay::onDisable()
-    {
-        unsubscribe();
-    }
-
-    void SpeedDisplay::processMessage(const autoware_auto_vehicle_msgs::msg::VehicleKinematicState::ConstSharedPtr msg)
+    void SpeedDisplay::updateSpeedData(const autoware_auto_vehicle_msgs::msg::VehicleKinematicState::ConstSharedPtr &msg)
     {
         try
         {
-            current_speed_ = std::round(msg->state.longitudinal_velocity_mps * 3.6);
+            // Assuming msg->state.longitudinal_velocity_mps is the field you're interested in
+            float speed = msg->state.longitudinal_velocity_mps;
+            // we received it as a m/s value, but we want to display it in km/h
+            current_speed_ = (speed * 3.6);
+
             queueRender();
         }
         catch (const std::exception &e)
         {
+            // Log the error
             std::cerr << "Error in processMessage: " << e.what() << std::endl;
         }
     }
+
+    // void SpeedDisplay::processMessage(const autoware_auto_vehicle_msgs::msg::VehicleKinematicState::ConstSharedPtr msg)
+    // {
+    //     try
+    //     {
+    //         current_speed_ = std::round(msg->state.longitudinal_velocity_mps * 3.6);
+    //         queueRender();
+    //     }
+    //     catch (const std::exception &e)
+    //     {
+    //         std::cerr << "Error in processMessage: " << e.what() << std::endl;
+    //     }
+    // }
 
     void SpeedDisplay::drawSpeedDisplay(QPainter &painter, const QRectF &backgroundRect)
     {
@@ -85,3 +94,6 @@ namespace rviz_2d_overlay_plugins
     }
 
 } // namespace rviz_2d_overlay_plugins
+
+#include <pluginlib/class_list_macros.hpp>
+PLUGINLIB_EXPORT_CLASS(rviz_2d_overlay_plugins::SpeedDisplay, rviz_common::Display)

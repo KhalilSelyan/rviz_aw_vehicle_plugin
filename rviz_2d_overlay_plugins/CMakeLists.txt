@@ -18,7 +18,6 @@ find_package(std_msgs REQUIRED)
 set(
         headers_to_moc
         include/overlay_text_display.hpp
-        include/pie_chart_display.h
         include/signal_display.h
         include/SteeringWheelDisplay.h
         include/GearDisplay.h
@@ -37,7 +36,6 @@ set(
         display_source_files
         src/overlay_text_display.cpp
         src/overlay_utils.cpp
-        src/pie_chart_display.cpp
         src/signal_display.cpp
         src/SteeringWheelDisplay.cpp 
         src/GearDisplay.cpp          

@@ -66,15 +66,18 @@ namespace rviz_2d_overlay_plugins
     protected:
         void onInitialize() override;
         void update(float wall_dt, float ros_dt) override;
+        void reset() override;
         void onEnable() override;
         void onDisable() override;
-        void reset() override;
+        void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::GearReport> &msg);
+        void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::SteeringReport> &msg);
+        void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::VehicleKinematicState> &msg);
+        void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport> &msg);
 
     private Q_SLOTS:
         void updateOverlaySize();
         void updateOverlayPosition();
         void updateSignalData();
-        void updateTopics();
 
     private:
         std::mutex mutex_;
@@ -84,12 +87,10 @@ namespace rviz_2d_overlay_plugins
         rviz_common::properties::IntProperty *property_left_;
         rviz_common::properties::IntProperty *property_top_;
         rviz_common::properties::ColorProperty *property_signal_color_;
-
-        /* add topic properties for each of my components */
-        rviz_common::properties::RosTopicProperty *property_steering_topic_;
-        rviz_common::properties::RosTopicProperty *property_gear_topic_;
-        rviz_common::properties::RosTopicProperty *property_speed_topic_;
-        rviz_common::properties::RosTopicProperty *property_turn_signals_topic_;
+        rviz_common::properties::RosTopicProperty *steering_topic_property_;
+        rviz_common::properties::RosTopicProperty *gear_topic_property_;
+        rviz_common::properties::RosTopicProperty *speed_topic_property_;
+        rviz_common::properties::RosTopicProperty *turn_signals_topic_property_;
 
         void drawBackground(QPainter &painter, const QRectF &backgroundRect);
         std::unique_ptr<SteeringWheelDisplay> steering_wheel_display_;
@@ -97,6 +98,16 @@ namespace rviz_2d_overlay_plugins
         std::unique_ptr<SpeedDisplay> speed_display_;
         std::unique_ptr<TurnSignalsDisplay> turn_signals_display_;
 
+        rclcpp::Node::SharedPtr rviz_node_;
+        rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::GearReport>::SharedPtr gear_sub_;
+        rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>::SharedPtr steering_sub_;
+        rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::VehicleKinematicState>::SharedPtr speed_sub_;
+        rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport>::SharedPtr turn_signals_sub_;
+
+        void updateGearData(const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr &msg);
+        void updateSteeringData(const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr &msg);
+        void updateSpeedData(const autoware_auto_vehicle_msgs::msg::VehicleKinematicState::ConstSharedPtr &msg);
+        void updateTurnSignalsData(const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr &msg);
         void drawWidget(QImage &hud);
     };
 }
