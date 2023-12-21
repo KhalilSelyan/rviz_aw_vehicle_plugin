@@ -3,6 +3,12 @@
 # Kill existing rviz2 process
 pkill -f rviz2
 
+# Source the ROS 2 setup script
+source /opt/ros/humble/setup.bash
+
+# Source autoware setup script (to be edited depending on your installation)
+source /home/khalil/autoware/install/setup.bash
+
 # Build the packages
 colcon build --packages-select rviz_2d_overlay_msgs rviz_2d_overlay_plugins
 
