@@ -1,0 +1,49 @@
+# Compiled object files
+*.o
+*.ko
+*.obj
+
+# Compiled dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled executables
+*.exe
+
+# Build directory
+build/
+
+# Install directory
+install/
+
+# Log directory
+log/
+
+# CMake build files
+CMakeFiles/
+CMakeCache.txt
+CMakeScripts/
+CMakeLists.txt.user
+
+# Generated files
+generated/
+
+# IDE files
+.vscode/
+.idea/
+
+# Dependency directories
+dependencies/
+
+# Documentation
+doc/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
