@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Kill existing rviz2 process
-pkill -f rviz2
-
 # Source the ROS 2 setup script
 source /opt/ros/humble/setup.bash
 
@@ -15,5 +12,6 @@ colcon build --packages-select rviz_2d_overlay_msgs rviz_2d_overlay_plugins
 # Source the setup script
 source ./install/setup.bash
 
-# Launch rviz2 with stdout and stderr printed to the terminal
+# Launch rviz2
+# rviz2 --ros-args --log-level DEBUG
 rviz2

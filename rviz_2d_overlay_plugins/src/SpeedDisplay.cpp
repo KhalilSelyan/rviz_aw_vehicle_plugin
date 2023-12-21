@@ -32,12 +32,12 @@ namespace rviz_2d_overlay_plugins
         // Cleanup if necessary
     }
 
-    void SpeedDisplay::updateSpeedData(const autoware_auto_vehicle_msgs::msg::VehicleKinematicState::ConstSharedPtr &msg)
+    void SpeedDisplay::updateSpeedData(const autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr &msg)
     {
         try
         {
             // Assuming msg->state.longitudinal_velocity_mps is the field you're interested in
-            float speed = msg->state.longitudinal_velocity_mps;
+            float speed = msg->longitudinal_velocity;
             // we received it as a m/s value, but we want to display it in km/h
             current_speed_ = (speed * 3.6);
 
@@ -50,7 +50,7 @@ namespace rviz_2d_overlay_plugins
         }
     }
 
-    // void SpeedDisplay::processMessage(const autoware_auto_vehicle_msgs::msg::VehicleKinematicState::ConstSharedPtr msg)
+    // void SpeedDisplay::processMessage(const autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr msg)
     // {
     //     try
     //     {
@@ -72,7 +72,7 @@ namespace rviz_2d_overlay_plugins
 
         QString speedNumber = QString::number(current_speed_, 'f', 0);
         int fontSize = 60;
-        QFont speedFont("Quicksand", fontSize, QFont::Bold);
+        QFont speedFont("Quicksand", fontSize);
         painter.setFont(speedFont);
 
         // Calculate the bounding box of the speed number

@@ -71,8 +71,9 @@ namespace rviz_2d_overlay_plugins
         void onDisable() override;
         void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::GearReport> &msg);
         void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::SteeringReport> &msg);
-        void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::VehicleKinematicState> &msg);
+        void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::VelocityReport> &msg);
         void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport> &msg);
+        void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::HazardLightsReport> &msg);
 
     private Q_SLOTS:
         void updateOverlaySize();
@@ -91,6 +92,7 @@ namespace rviz_2d_overlay_plugins
         rviz_common::properties::RosTopicProperty *gear_topic_property_;
         rviz_common::properties::RosTopicProperty *speed_topic_property_;
         rviz_common::properties::RosTopicProperty *turn_signals_topic_property_;
+        rviz_common::properties::RosTopicProperty *hazard_lights_topic_property_;
 
         void drawBackground(QPainter &painter, const QRectF &backgroundRect);
         std::unique_ptr<SteeringWheelDisplay> steering_wheel_display_;
@@ -101,13 +103,19 @@ namespace rviz_2d_overlay_plugins
         rclcpp::Node::SharedPtr rviz_node_;
         rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::GearReport>::SharedPtr gear_sub_;
         rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>::SharedPtr steering_sub_;
-        rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::VehicleKinematicState>::SharedPtr speed_sub_;
+        rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>::SharedPtr speed_sub_;
         rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport>::SharedPtr turn_signals_sub_;
+        rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::HazardLightsReport>::SharedPtr hazard_lights_sub_;
+
+        std::thread executor_thread_;
+        rclcpp::executors::SingleThreadedExecutor executor_;
+        bool executor_running_;
 
         void updateGearData(const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr &msg);
         void updateSteeringData(const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr &msg);
-        void updateSpeedData(const autoware_auto_vehicle_msgs::msg::VehicleKinematicState::ConstSharedPtr &msg);
+        void updateSpeedData(const autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr &msg);
         void updateTurnSignalsData(const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr &msg);
+        void updateHazardLightsData(const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr &msg);
         void drawWidget(QImage &hud);
     };
 }

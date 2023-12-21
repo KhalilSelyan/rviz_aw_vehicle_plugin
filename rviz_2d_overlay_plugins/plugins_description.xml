@@ -16,7 +16,7 @@
     </class>
     <class name="rviz_2d_overlay_plugins/SpeedDisplay" type="rviz_2d_overlay_plugins::SpeedDisplay" base_class_type="rviz_common::Display">
         <description>Speed display plugin.</description>
-        <message_type>autoware_auto_vehicle_msgs/msg/VehicleKinematicState</message_type>
+        <message_type>autoware_auto_vehicle_msgs/msg/VelocityReport</message_type>
     </class>
     <class name="rviz_2d_overlay_plugins/TurnSignalsDisplay" type="rviz_2d_overlay_plugins::TurnSignalsDisplay" base_class_type="rviz_common::Display">
         <description>Turn signals display plugin.</description>

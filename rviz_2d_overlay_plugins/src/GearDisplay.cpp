@@ -40,6 +40,27 @@ namespace rviz_2d_overlay_plugins
 
     void GearDisplay::drawGearIndicator(QPainter &painter, const QRectF &backgroundRect)
     {
+
+        // we deal with the different gears here
+        std::string gearString;
+        switch (current_gear_)
+        {
+        case autoware_auto_vehicle_msgs::msg::GearReport::NEUTRAL:
+            gearString = "N";
+            break;
+        case autoware_auto_vehicle_msgs::msg::GearReport::LOW:
+        case autoware_auto_vehicle_msgs::msg::GearReport::LOW_2:
+            gearString = "L";
+            break;
+        case autoware_auto_vehicle_msgs::msg::GearReport::NONE:
+            gearString = "P";
+            break;
+        // all the drive gears from DRIVE to DRIVE_20
+        default:
+            gearString = "D";
+            break;
+        }
+
         QFont gearFont("Quicksand", 16, QFont::Bold);
         painter.setFont(gearFont);
         QPen borderPen(Qt::white);
@@ -52,7 +73,7 @@ namespace rviz_2d_overlay_plugins
         QRect gearRect(gearX, gearY, gearBoxSize, gearBoxSize);
         painter.setBrush(QColor(0, 0, 0, 0));
         painter.drawRoundedRect(gearRect, 5, 5);
-        painter.drawText(gearRect, Qt::AlignCenter, current_gear_ == 0 ? "N" : std::to_string(current_gear_).c_str());
+        painter.drawText(gearRect, Qt::AlignCenter, QString::fromStdString(gearString));
     }
 
 } // namespace rviz_2d_overlay_plugins

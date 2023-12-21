@@ -12,7 +12,7 @@
 #include <rviz_common/properties/color_property.hpp>
 #include <QImage>
 #include <QString>
-#include "autoware_auto_vehicle_msgs/msg/vehicle_kinematic_state.hpp"
+#include "autoware_auto_vehicle_msgs/msg/velocity_report.hpp"
 #endif
 
 namespace rviz_2d_overlay_plugins
@@ -25,7 +25,7 @@ namespace rviz_2d_overlay_plugins
         SpeedDisplay();
         virtual ~SpeedDisplay() override;
         void drawSpeedDisplay(QPainter &painter, const QRectF &backgroundRect);
-        void updateSpeedData(const autoware_auto_vehicle_msgs::msg::VehicleKinematicState::ConstSharedPtr &msg);
+        void updateSpeedData(const autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr &msg);
 
     private:
         float current_speed_; // Internal variable to store current speed

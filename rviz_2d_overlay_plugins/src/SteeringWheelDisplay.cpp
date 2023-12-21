@@ -43,7 +43,7 @@ namespace rviz_2d_overlay_plugins
             // Assuming msg->steering_angle is the field you're interested in
             float steeringAngle = msg->steering_tire_angle;
             // we received it as a radian value, but we want to display it in degrees
-            steering_angle_ = (steeringAngle * 180 / M_PI);
+            steering_angle_ = (steeringAngle * -180 / M_PI) * 17; // 17 is the ratio between the steering wheel and the steering tire angle i assume
 
             queueRender();
         }
@@ -99,24 +99,6 @@ namespace rviz_2d_overlay_plugins
         QRect steeringRect(wheelCenterX - wheelImage.width() / 2 - 2, wheelCenterY - wheelImage.height() / 2 - 2, wheelImage.width(), wheelImage.height());
         painter.drawText(steeringRect, Qt::AlignCenter, steeringAngleStringAfterModulo + "°");
     }
-
-    // void SteeringWheelDisplay::processMessage(const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg)
-    // {
-    //     try
-    //     {
-    //         // Assuming msg->steering_angle is the field you're interested in
-    //         float steeringAngle = msg->steering_tire_angle;
-    //         // we received it as a radian value, but we want to display it in degrees
-    //         steering_angle_ = (steeringAngle * 180 / M_PI);
-
-    //         queueRender();
-    //     }
-    //     catch (const std::exception &e)
-    //     {
-    //         // Log the error
-    //         std::cerr << "Error in processMessage: " << e.what() << std::endl;
-    //     }
-    // }
 
     QImage SteeringWheelDisplay::coloredImage(const QImage &source, const QColor &color)
     {

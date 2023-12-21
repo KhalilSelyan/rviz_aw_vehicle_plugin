@@ -19,6 +19,9 @@ namespace rviz_2d_overlay_plugins
 
     TurnSignalsDisplay::TurnSignalsDisplay() : current_turn_signal_(0)
     {
+
+        last_toggle_time_ = std::chrono::steady_clock::now();
+
         arrowImage.load(":/assets/images/arrow.png");
     }
 
@@ -42,18 +45,20 @@ namespace rviz_2d_overlay_plugins
         }
     }
 
-    // void TurnSignalsDisplay::processMessage(const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr msg)
-    // {
-    //     try
-    //     {
-    //         current_turn_signal_ = msg->report; // Assuming this field contains the turn signal state
-    //         queueRender();
-    //     }
-    //     catch (const std::exception &e)
-    //     {
-    //         std::cerr << "Error in processMessage: " << e.what() << std::endl;
-    //     }
-    // }
+    void TurnSignalsDisplay::updateHazardLightsData(const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr &msg)
+    {
+        try
+        {
+            // Assuming msg->report is the field you're interested in
+            current_hazard_lights_ = msg->report;
+            queueRender();
+        }
+        catch (const std::exception &e)
+        {
+            // Log the error
+            std::cerr << "Error in processMessage: " << e.what() << std::endl;
+        }
+    }
 
     void TurnSignalsDisplay::drawArrows(QPainter &painter, const QRectF &backgroundRect, const QColor &color)
     {
@@ -64,16 +69,33 @@ namespace rviz_2d_overlay_plugins
         int rightArrowXPos = backgroundRect.width() * 3 / 4;                      // Adjust as needed
 
         bool leftActive = (current_turn_signal_ == autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ENABLE_LEFT ||
-                           current_turn_signal_ == autoware_auto_vehicle_msgs::msg::HazardLightsReport::ENABLE);
+                           current_hazard_lights_ == autoware_auto_vehicle_msgs::msg::HazardLightsReport::ENABLE);
         bool rightActive = (current_turn_signal_ == autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ENABLE_RIGHT ||
-                            current_turn_signal_ == autoware_auto_vehicle_msgs::msg::HazardLightsReport::ENABLE);
-        QColor overlayColor = color;
+                            current_hazard_lights_ == autoware_auto_vehicle_msgs::msg::HazardLightsReport::ENABLE);
 
-        QImage leftArrow = (leftActive ? coloredImage(scaledLeftArrow, overlayColor) : scaledLeftArrow);
-        painter.drawImage(QPointF(leftArrowXPos, arrowYPos), leftArrow);
+        // Color the arrows based on the state of the turn signals and hazard lights by having them blink on and off
+        if (this->blink_on_)
+        {
+            if (leftActive)
+            {
+                scaledLeftArrow = coloredImage(scaledLeftArrow, color);
+            }
+            if (rightActive)
+            {
+                scaledRightArrow = coloredImage(scaledRightArrow, color);
+            }
+        }
 
-        QImage rightArrow = (rightActive ? coloredImage(scaledRightArrow, overlayColor) : scaledRightArrow);
-        painter.drawImage(QPointF(rightArrowXPos, arrowYPos), rightArrow);
+        // Draw the arrows
+        painter.drawImage(QPointF(leftArrowXPos, arrowYPos), scaledLeftArrow);
+        painter.drawImage(QPointF(rightArrowXPos, arrowYPos), scaledRightArrow);
+
+        auto now = std::chrono::steady_clock::now();
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last_toggle_time_) >= blink_interval_)
+        {
+            blink_on_ = !blink_on_; // Toggle the blink state
+            last_toggle_time_ = now;
+        }
     }
 
     QImage TurnSignalsDisplay::coloredImage(const QImage &source, const QColor &color)
