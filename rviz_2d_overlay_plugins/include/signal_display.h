@@ -44,13 +44,14 @@
 #include <rviz_common/properties/int_property.hpp>
 #include <rviz_common/properties/float_property.hpp>
 #include <rviz_common/properties/color_property.hpp>
-#include <rviz_common/properties/color_property.hpp>
+#include <rviz_common/properties/ros_topic_property.hpp>
 #include <QImage>
 #include <QString>
 #include "SteeringWheelDisplay.h"
 #include "GearDisplay.h"
 #include "SpeedDisplay.h"
 #include "TurnSignalsDisplay.h"
+#include <mutex>
 #endif
 
 namespace rviz_2d_overlay_plugins
@@ -61,7 +62,7 @@ namespace rviz_2d_overlay_plugins
         Q_OBJECT
     public:
         SignalDisplay();
-        virtual ~SignalDisplay();
+        virtual ~SignalDisplay() override;
 
     protected:
         void onInitialize() override;
@@ -69,16 +70,11 @@ namespace rviz_2d_overlay_plugins
         void reset() override;
         void onEnable() override;
         void onDisable() override;
-        void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::GearReport> &msg);
-        void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::SteeringReport> &msg);
-        void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::VelocityReport> &msg);
-        void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport> &msg);
-        void processMessage(const std::shared_ptr<const autoware_auto_vehicle_msgs::msg::HazardLightsReport> &msg);
 
     private Q_SLOTS:
         void updateOverlaySize();
         void updateOverlayPosition();
-        void updateSignalData();
+        void updateOverlayColor();
 
     private:
         std::mutex mutex_;
@@ -88,11 +84,11 @@ namespace rviz_2d_overlay_plugins
         rviz_common::properties::IntProperty *property_left_;
         rviz_common::properties::IntProperty *property_top_;
         rviz_common::properties::ColorProperty *property_signal_color_;
-        rviz_common::properties::RosTopicProperty *steering_topic_property_;
-        rviz_common::properties::RosTopicProperty *gear_topic_property_;
-        rviz_common::properties::RosTopicProperty *speed_topic_property_;
-        rviz_common::properties::RosTopicProperty *turn_signals_topic_property_;
-        rviz_common::properties::RosTopicProperty *hazard_lights_topic_property_;
+        std::unique_ptr<rviz_common::properties::RosTopicProperty> steering_topic_property_;
+        std::unique_ptr<rviz_common::properties::RosTopicProperty> gear_topic_property_;
+        std::unique_ptr<rviz_common::properties::RosTopicProperty> speed_topic_property_;
+        std::unique_ptr<rviz_common::properties::RosTopicProperty> turn_signals_topic_property_;
+        std::unique_ptr<rviz_common::properties::RosTopicProperty> hazard_lights_topic_property_;
 
         void drawBackground(QPainter &painter, const QRectF &backgroundRect);
         std::unique_ptr<SteeringWheelDisplay> steering_wheel_display_;
@@ -110,6 +106,8 @@ namespace rviz_2d_overlay_plugins
         std::thread executor_thread_;
         rclcpp::executors::SingleThreadedExecutor executor_;
         bool executor_running_;
+
+        std::mutex property_mutex_;
 
         void updateGearData(const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr &msg);
         void updateSteeringData(const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr &msg);
