@@ -73,6 +73,7 @@ namespace rviz_2d_overlay_plugins
 
     private Q_SLOTS:
         void updateOverlaySize();
+        void updateSmallOverlaySize();
         void updateOverlayPosition();
         void updateOverlayColor();
 
@@ -91,6 +92,8 @@ namespace rviz_2d_overlay_plugins
         std::unique_ptr<rviz_common::properties::RosTopicProperty> hazard_lights_topic_property_;
 
         void drawBackground(QPainter &painter, const QRectF &backgroundRect);
+        void setupRosSubscriptions();
+
         std::unique_ptr<SteeringWheelDisplay> steering_wheel_display_;
         std::unique_ptr<GearDisplay> gear_display_;
         std::unique_ptr<SpeedDisplay> speed_display_;
