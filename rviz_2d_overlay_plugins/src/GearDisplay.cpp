@@ -1,5 +1,6 @@
 #include "GearDisplay.h"
 
+#include <qtextstream.h>
 #include <OgreMaterialManager.h>
 #include <OgreTextureManager.h>
 #include <OgreTexture.h>
@@ -8,12 +9,16 @@
 #include <rviz_rendering/render_system.hpp>
 #include <QPainter>
 #include <QFontDatabase>
+#include <QPointer>
+#include <QThread>
+#include <QDebug>
+#include <qdebug.h>
 #include <cmath>
 #include <algorithm>
 #include <iomanip>
 #include <memory>
 #include <string>
-
+#include <rclcpp/rclcpp.hpp>
 namespace rviz_2d_overlay_plugins
 {
 
@@ -31,15 +36,43 @@ namespace rviz_2d_overlay_plugins
     GearDisplay::~GearDisplay()
     {
         // Cleanup if necessary
+        printf("Is this ever called?\n");
     }
 
-    void GearDisplay::updateGearData(const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr &msg)
+    void GearDisplay::onInitialize()
     {
-        current_gear_ = msg->report; // Assuming msg->report contains the gear information
+        RTDClass::onInitialize();
+    }
+
+    void GearDisplay::processMessage(autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr msg)
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        try
+        {
+
+            // Assuming msg->report is the field you're interested in
+
+            qDebug() << "currentgear before is: " << current_gear_;
+            current_gear_ = msg->report;
+
+            qDebug() << "current_gear_ value is: " << current_gear_;
+
+            newDataReceived(msg->report);
+            emit newDataReceived(msg->report);
+            qDebug() << "newDataReceived emitted with gear:" << msg->report;
+        }
+        catch (const std::exception &e)
+        {
+            // Log the error
+            std::cerr << "Error in processMessage: " << e.what() << std::endl;
+        }
     }
 
     void GearDisplay::drawGearIndicator(QPainter &painter, const QRectF &backgroundRect)
     {
+        std::lock_guard<std::mutex> lock(mutex_);
+
+        qDebug() << "drawGearIndicator current_gear_ value is: " << current_gear_;
 
         // we deal with the different gears here
         std::string gearString;
@@ -55,7 +88,7 @@ namespace rviz_2d_overlay_plugins
         case autoware_auto_vehicle_msgs::msg::GearReport::NONE:
             gearString = "P";
             break;
-        // all the drive gears from DRIVE to DRIVE_20
+        // all the drive gears from DRIVE to DRIVE_18
         default:
             gearString = "D";
             break;
@@ -74,6 +107,8 @@ namespace rviz_2d_overlay_plugins
         painter.setBrush(QColor(0, 0, 0, 0));
         painter.drawRoundedRect(gearRect, 5, 5);
         painter.drawText(gearRect, Qt::AlignCenter, QString::fromStdString(gearString));
+
+        queueRender();
     }
 
 } // namespace rviz_2d_overlay_plugins

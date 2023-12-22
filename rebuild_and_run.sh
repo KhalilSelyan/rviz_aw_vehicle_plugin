@@ -13,4 +13,5 @@ colcon build --packages-select rviz_2d_overlay_msgs rviz_2d_overlay_plugins
 source ./install/setup.bash
 
 # Launch rviz2
-rviz2 -l --ros-args --log-level DEBUG
+# rviz2 -l --ros-args --log-level DEBUG
+rviz2

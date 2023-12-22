@@ -36,15 +36,17 @@ namespace rviz_2d_overlay_plugins
         // Cleanup if necessary
     }
 
-    void SteeringWheelDisplay::updateSteeringData(const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr &msg)
+    void SteeringWheelDisplay::onInitialize()
+    {
+        RTDClass::onInitialize();
+    }
+
+    void SteeringWheelDisplay::processMessage(autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr msg)
     {
         try
         {
-            // Assuming msg->steering_angle is the field you're interested in
-            float steeringAngle = msg->steering_tire_angle;
-            // we received it as a radian value, but we want to display it in degrees
-            steering_angle_ = (steeringAngle * -180 / M_PI) * 17; // 17 is the ratio between the steering wheel and the steering tire angle i assume
-
+            // Assuming msg->report is the field you're interested in
+            steering_angle_ = msg->steering_tire_angle * -180 / M_PI * 17; // 17 is the steering ratio
             queueRender();
         }
         catch (const std::exception &e)

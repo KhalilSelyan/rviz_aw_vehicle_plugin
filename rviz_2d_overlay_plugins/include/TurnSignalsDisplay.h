@@ -19,15 +19,19 @@
 namespace rviz_2d_overlay_plugins
 {
 
-    class TurnSignalsDisplay : public rviz_common::Display
+    class TurnSignalsDisplay : public rviz_common::RosTopicDisplay<autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport>
     {
         Q_OBJECT
     public:
         TurnSignalsDisplay();
         virtual ~TurnSignalsDisplay() override;
         void drawArrows(QPainter &painter, const QRectF &backgroundRect, const QColor &color);
-        void updateTurnSignalsData(const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr &msg);
-        void updateHazardLightsData(const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr &msg);
+        // void updateTurnSignalsData(const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr &msg);
+        // void updateHazardLightsData(const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr &msg);
+
+    protected:
+        virtual void onInitialize() override;
+        virtual void processMessage(autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr msg) override;
 
     private:
         QImage arrowImage;

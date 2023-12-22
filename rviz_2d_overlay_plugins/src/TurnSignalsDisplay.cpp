@@ -30,27 +30,17 @@ namespace rviz_2d_overlay_plugins
         // Cleanup if necessary
     }
 
-    void TurnSignalsDisplay::updateTurnSignalsData(const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr &msg)
+    void TurnSignalsDisplay::onInitialize()
+    {
+        RTDClass::onInitialize();
+    }
+
+    void TurnSignalsDisplay::processMessage(autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr msg)
     {
         try
         {
             // Assuming msg->report is the field you're interested in
             current_turn_signal_ = msg->report;
-            queueRender();
-        }
-        catch (const std::exception &e)
-        {
-            // Log the error
-            std::cerr << "Error in processMessage: " << e.what() << std::endl;
-        }
-    }
-
-    void TurnSignalsDisplay::updateHazardLightsData(const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr &msg)
-    {
-        try
-        {
-            // Assuming msg->report is the field you're interested in
-            current_hazard_lights_ = msg->report;
             queueRender();
         }
         catch (const std::exception &e)

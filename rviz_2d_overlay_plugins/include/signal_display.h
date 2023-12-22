@@ -73,9 +73,11 @@ namespace rviz_2d_overlay_plugins
 
     private Q_SLOTS:
         void updateOverlaySize();
-        void updateSmallOverlaySize();
         void updateOverlayPosition();
         void updateOverlayColor();
+
+    public Q_SLOTS:
+        void triggerRender(int gear);
 
     private:
         std::mutex mutex_;
@@ -85,39 +87,14 @@ namespace rviz_2d_overlay_plugins
         rviz_common::properties::IntProperty *property_left_;
         rviz_common::properties::IntProperty *property_top_;
         rviz_common::properties::ColorProperty *property_signal_color_;
-        std::unique_ptr<rviz_common::properties::RosTopicProperty> steering_topic_property_;
-        std::unique_ptr<rviz_common::properties::RosTopicProperty> gear_topic_property_;
-        std::unique_ptr<rviz_common::properties::RosTopicProperty> speed_topic_property_;
-        std::unique_ptr<rviz_common::properties::RosTopicProperty> turn_signals_topic_property_;
-        std::unique_ptr<rviz_common::properties::RosTopicProperty> hazard_lights_topic_property_;
 
-        void drawBackground(QPainter &painter, const QRectF &backgroundRect);
-        void setupRosSubscriptions();
+        void drawWidget(QImage &hud);
+        void drawBackground(QPainter &painter, const QRectF &backgroundRect, float opacity);
 
         std::unique_ptr<SteeringWheelDisplay> steering_wheel_display_;
         std::unique_ptr<GearDisplay> gear_display_;
         std::unique_ptr<SpeedDisplay> speed_display_;
         std::unique_ptr<TurnSignalsDisplay> turn_signals_display_;
-
-        rclcpp::Node::SharedPtr rviz_node_;
-        rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::GearReport>::SharedPtr gear_sub_;
-        rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::SteeringReport>::SharedPtr steering_sub_;
-        rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>::SharedPtr speed_sub_;
-        rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport>::SharedPtr turn_signals_sub_;
-        rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::HazardLightsReport>::SharedPtr hazard_lights_sub_;
-
-        std::thread executor_thread_;
-        rclcpp::executors::SingleThreadedExecutor executor_;
-        bool executor_running_;
-
-        std::mutex property_mutex_;
-
-        void updateGearData(const autoware_auto_vehicle_msgs::msg::GearReport::ConstSharedPtr &msg);
-        void updateSteeringData(const autoware_auto_vehicle_msgs::msg::SteeringReport::ConstSharedPtr &msg);
-        void updateSpeedData(const autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr &msg);
-        void updateTurnSignalsData(const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr &msg);
-        void updateHazardLightsData(const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr &msg);
-        void drawWidget(QImage &hud);
     };
 }
 

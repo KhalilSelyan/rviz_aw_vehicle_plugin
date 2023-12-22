@@ -1,4 +1,5 @@
 #include "SpeedDisplay.h"
+
 #include <OgreMaterialManager.h>
 #include <OgreTextureManager.h>
 #include <OgreTexture.h>
@@ -32,15 +33,17 @@ namespace rviz_2d_overlay_plugins
         // Cleanup if necessary
     }
 
-    void SpeedDisplay::updateSpeedData(const autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr &msg)
+    void SpeedDisplay::onInitialize()
+    {
+        RTDClass::onInitialize();
+    }
+
+    void SpeedDisplay::processMessage(autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr msg)
     {
         try
         {
-            // Assuming msg->state.longitudinal_velocity_mps is the field you're interested in
-            float speed = msg->longitudinal_velocity;
-            // we received it as a m/s value, but we want to display it in km/h
-            current_speed_ = (speed * 3.6);
-
+            // Assuming msg->report is the field you're interested in
+            current_speed_ = msg->longitudinal_velocity;
             queueRender();
         }
         catch (const std::exception &e)
@@ -49,19 +52,6 @@ namespace rviz_2d_overlay_plugins
             std::cerr << "Error in processMessage: " << e.what() << std::endl;
         }
     }
-
-    // void SpeedDisplay::processMessage(const autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr msg)
-    // {
-    //     try
-    //     {
-    //         current_speed_ = std::round(msg->state.longitudinal_velocity_mps * 3.6);
-    //         queueRender();
-    //     }
-    //     catch (const std::exception &e)
-    //     {
-    //         std::cerr << "Error in processMessage: " << e.what() << std::endl;
-    //     }
-    // }
 
     void SpeedDisplay::drawSpeedDisplay(QPainter &painter, const QRectF &backgroundRect)
     {
