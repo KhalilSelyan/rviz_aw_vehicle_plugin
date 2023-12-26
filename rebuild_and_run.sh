@@ -6,6 +6,9 @@ source /opt/ros/humble/setup.bash
 # Source autoware setup script (to be edited depending on your installation)
 source /home/khalil/autoware/install/setup.bash
 
+# clear the screen
+clear
+
 # Build the packages
 colcon build --packages-select rviz_2d_overlay_msgs rviz_2d_overlay_plugins
 
@@ -13,4 +16,5 @@ colcon build --packages-select rviz_2d_overlay_msgs rviz_2d_overlay_plugins
 source ./install/setup.bash
 
 # Launch rviz2
-rviz2 -l --ros-args --log-level DEBUG
+# rviz2 -l --ros-args --log-level DEBUG
+rviz2
