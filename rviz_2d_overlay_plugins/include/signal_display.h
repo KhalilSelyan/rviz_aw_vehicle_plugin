@@ -51,6 +51,8 @@
 #include "GearDisplay.h"
 #include "SpeedDisplay.h"
 #include "TurnSignalsDisplay.h"
+#include "TrafficDisplay.h"
+#include "SpeedLimitDisplay.h"
 #include <mutex>
 #endif
 
@@ -79,6 +81,7 @@ namespace rviz_2d_overlay_plugins
 
     private:
         std::mutex mutex_;
+
         rviz_2d_overlay_plugins::OverlayObject::SharedPtr overlay_;
         rviz_common::properties::IntProperty *property_width_;
         rviz_common::properties::IntProperty *property_height_;
@@ -90,14 +93,15 @@ namespace rviz_2d_overlay_plugins
         std::unique_ptr<rviz_common::properties::RosTopicProperty> speed_topic_property_;
         std::unique_ptr<rviz_common::properties::RosTopicProperty> turn_signals_topic_property_;
         std::unique_ptr<rviz_common::properties::RosTopicProperty> hazard_lights_topic_property_;
-
-        void drawBackground(QPainter &painter, const QRectF &backgroundRect);
-        void setupRosSubscriptions();
+        // std::unique_ptr<rviz_common::properties::RosTopicProperty> traffic_topic_property_;
+        std::unique_ptr<rviz_common::properties::RosTopicProperty> speed_limit_topic_property_;
 
         std::unique_ptr<SteeringWheelDisplay> steering_wheel_display_;
         std::unique_ptr<GearDisplay> gear_display_;
         std::unique_ptr<SpeedDisplay> speed_display_;
         std::unique_ptr<TurnSignalsDisplay> turn_signals_display_;
+        std::unique_ptr<TrafficDisplay> traffic_display_;
+        std::unique_ptr<SpeedLimitDisplay> speed_limit_display_;
 
         rclcpp::Node::SharedPtr rviz_node_;
         rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::GearReport>::SharedPtr gear_sub_;
@@ -105,10 +109,8 @@ namespace rviz_2d_overlay_plugins
         rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::VelocityReport>::SharedPtr speed_sub_;
         rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport>::SharedPtr turn_signals_sub_;
         rclcpp::Subscription<autoware_auto_vehicle_msgs::msg::HazardLightsReport>::SharedPtr hazard_lights_sub_;
-
-        std::thread executor_thread_;
-        rclcpp::executors::SingleThreadedExecutor executor_;
-        bool executor_running_;
+        // rclcpp::Subscription<autoware_perception_msgs::msg::TrafficSignalArray>::SharedPtr traffic_sub_;
+        rclcpp::Subscription<tier4_planning_msgs::msg::VelocityLimit>::SharedPtr speed_limit_sub_;
 
         std::mutex property_mutex_;
 
@@ -117,7 +119,11 @@ namespace rviz_2d_overlay_plugins
         void updateSpeedData(const autoware_auto_vehicle_msgs::msg::VelocityReport::ConstSharedPtr &msg);
         void updateTurnSignalsData(const autoware_auto_vehicle_msgs::msg::TurnIndicatorsReport::ConstSharedPtr &msg);
         void updateHazardLightsData(const autoware_auto_vehicle_msgs::msg::HazardLightsReport::ConstSharedPtr &msg);
+        // void updateTrafficLightData(const autoware_perception_msgs::msg::TrafficSignalArray::ConstSharedPtr msg);
+        void updateSpeedLimitData(const tier4_planning_msgs::msg::VelocityLimit::ConstSharedPtr msg);
+        void drawBackground(QPainter &painter, const QRectF &backgroundRect);
         void drawWidget(QImage &hud);
+        void setupRosSubscriptions();
     };
 }
 
