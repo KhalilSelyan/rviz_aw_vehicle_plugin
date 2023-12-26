@@ -5,6 +5,9 @@ project(rviz_2d_overlay_plugins)
 find_package(ament_cmake_auto REQUIRED)
 find_package(ament_cmake REQUIRED)
 find_package(autoware_auto_vehicle_msgs REQUIRED)
+find_package(autoware_perception_msgs REQUIRED)
+find_package(tier4_perception_msgs REQUIRED)
+find_package(tier4_planning_msgs REQUIRED)
 ament_auto_find_build_dependencies() 
 # if your cmake has this line it should probably find autoware_auto_vehicle_msgs package if not you should add to ament_target_dependencies()
 
@@ -23,6 +26,8 @@ set(
         include/GearDisplay.h
         include/SpeedDisplay.h
         include/TurnSignalsDisplay.h
+        include/TrafficDisplay.h
+        include/SpeedLimitDisplay.h
 )
 
 qt5_add_resources(RESOURCES_RCC resources.qrc)
@@ -41,12 +46,11 @@ set(
         src/GearDisplay.cpp          
         src/SpeedDisplay.cpp         
         src/TurnSignalsDisplay.cpp   
+        src/TrafficDisplay.cpp
+        src/SpeedLimitDisplay.cpp
         ${RESOURCES_RCC} # Add this line
 
 )
-
-add_executable(string_to_overlay_text src/string_to_overlay_text.cpp)
-ament_target_dependencies(string_to_overlay_text rclcpp std_msgs rviz_2d_overlay_msgs autoware_auto_vehicle_msgs)
 
 add_library(
         ${PROJECT_NAME} SHARED
@@ -86,8 +90,10 @@ ament_target_dependencies(
         rviz_common
         rviz_rendering
         rviz_2d_overlay_msgs
-        std_msgs
         autoware_auto_vehicle_msgs
+        autoware_perception_msgs
+        tier4_perception_msgs
+        tier4_planning_msgs
 )
 
 ament_export_include_directories(include)
@@ -113,7 +119,6 @@ install(
 
 install(
         TARGETS
-        string_to_overlay_text
         DESTINATION lib/${PROJECT_NAME}
 )
 
